@@ -1,13 +1,21 @@
 const queries = require('./queries')
 
 module.exports = app => {
-    const { existsOrError } = app.api.validation
+    const { existsOrError, notExistsOrError } = app.api.validation
 
-    const save = (req, res) => {
+    const save = async (req, res) => {
         const article = { ...req.body }
         if (req.params.id) article.id = req.params.id
 
         try {
+            const userFromDB = await app.db('users').where({ id: article.userId }).first()
+            console.log(userFromDB)
+
+            if (!userFromDB.admin) {
+                let existPossibleSpam = await app.db('articles').where({ userId: article.userId })
+                console.log(existPossibleSpam.length)
+                notExistsOrError(existPossibleSpam.length >= 20, 'quer adicionar mais dispositivos? contate a nossa equipe')
+            }
             existsOrError(article.name, 'Nome não informado')
             existsOrError(article.description, 'Descrição não informada')
             existsOrError(article.categoryId, 'Categoria não informada')

@@ -28,17 +28,26 @@ module.exports = app => {
                     return res.status(400).send(msg)
                 }
 
-                let existOneNotAdmin = await app.db('categories').where({ userId: category.userId, parentId: null }).first()
-                // console.log(existOneNotAdmin)
-                if (existOneNotAdmin) {
-                    if (category.id != existOneNotAdmin.id) {
-                        try {
-                            notExistsOrError(existOneNotAdmin, 'Você só pode criar um Nó Raiz')
-                        } catch (msg) {
-                            return res.status(400).send(msg)
-                        }
-                    }
+                let existPossibleSpam = await app.db('categories').where({ userId: category.userId, parentId: null })
+                // console.log(existPossibleSpam.length)
+                try {
+                    notExistsOrError(existPossibleSpam.length >= 3, 'quer adicionar mais estabelecimentos? contate a nossa equipe.')
+                    // 'Para segurança de nossos clientes n permitimos mais de 3 estabelecimentos controladas por um unico administrador, contate a nossa equipe para que seja permitido a ação.')
+                } catch (msg) {
+                    return res.status(400).send(msg)
                 }
+
+                // let existOneNotAdmin = await app.db('categories').where({ userId: category.userId, parentId: null }).first()
+
+                // if (existOneNotAdmin) {
+                //     if (category.id != existOneNotAdmin.id) {
+                //         try {
+                //             notExistsOrError(existOneNotAdmin, 'Você só pode criar um Nó Raiz')
+                //         } catch (msg) {
+                //             return res.status(400).send(msg)
+                //         }
+                //     }
+                // }
             }
         }
 
@@ -51,12 +60,12 @@ module.exports = app => {
             existsOrError(category.userId, 'usuario não informado')
 
             if (category.parentId === null || category.parentId === undefined) {
-                console.log('2')
+                // console.log('2')
                 const categoryFromDB = await app.db('categories')
                     .where({ name: category.name, parentId: null }).first()
                 notExistsOrError(categoryFromDB, 'Nome da categoria já existe nesse nó 1')
             } else {
-                console.log(category.parentId)
+                // console.log(category.parentId)
                 const categoryFromDB = await app.db('categories')
                     .where({ name: category.name, parentId: category.parentId }).first()
                 // if (!category.id) {
@@ -78,10 +87,49 @@ module.exports = app => {
                 .then(_ => res.status(204).send())
                 .catch(err => res.status(500).send(err))
         } else {
-            app.db('categories')
-                .insert(category)
-                .then(_ => res.status(204).send())
-                .catch(err => res.status(500).send(err))
+            if (category.parentId == null) {
+                app.db('categories')
+                    .insert(category)
+                    .then(async () => {
+                        let findThisParent = await app.db('categories').where({ name: category.name, userId: category.userId }).first()
+                        category.parentId = findThisParent.id
+                        category.name = 'Portões'
+                        app.db('categories')
+                            .insert(category)
+                            .then(async () => {
+                                category.name = 'Portas'
+                                app.db('categories')
+                                    .insert(category)
+                                    .then(async () => {
+                                        category.name = 'Janelas'
+                                        app.db('categories')
+                                            .insert(category)
+                                            .then(async () => {
+                                                category.name = 'Cortinas'
+                                                app.db('categories')
+                                                    .insert(category)
+                                                    .then(async () => {
+                                                        category.name = 'Imulinação'
+                                                        app.db('categories')
+                                                            .insert(category)
+                                                            .then(async () => {
+                                                                category.name = 'Eletrônicos'
+                                                                app.db('categories')
+                                                                    .insert(category)
+                                                                    .then(_ => res.status(204).send())
+                                                                    .catch(err => res.status(500).send(err))
+                                                            })
+                                                    })
+                                            })
+                                    })
+                            })
+                    })
+            } else {
+                app.db('categories')
+                    .insert(category)
+                    .then(_ => res.status(204).send())
+                    .catch(err => res.status(500).send(err))
+            }
         }
         // }
     }
