@@ -62,9 +62,9 @@ module.exports = app => {
 
     const remove = async (req, res) => {
         try {
-            const articles = await app.db('articles')
+            const devices = await app.db('devices')
                 .where({ userId: req.params.id })
-            notExistsOrError(articles, 'Usuário possui artigos.')
+            notExistsOrError(devices, 'Usuário possui artigos.')
 
             const rowsUpdated = await app.db('users')
                 .update({ deletedAt: new Date() })
@@ -155,9 +155,9 @@ module.exports = app => {
 
     const removeById = async (req, res) => {
         try {
-            const articles = await app.db('articles')
+            const devices = await app.db('devices')
                 .where({ userId: req.params.id })
-            notExistsOrError(articles, 'Você possui artigos.')
+            notExistsOrError(devices, 'Você possui artigos.')
 
             const rowsUpdated = await app.db('users')
                 .update({ deletedAt: new Date() })

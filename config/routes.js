@@ -20,9 +20,9 @@ module.exports = app => {
         .all(app.config.passport.authenticate())
         .post(app.api.user.saveByIdImage)
 
-    app.route('/user/:id/articles')
+    app.route('/user/:id/devices')
         .all(app.config.passport.authenticate())
-        .get(app.api.article.getByUser)
+        .get(app.api.device.getByUser)
 
     app.route('/user/:id/categories')
         .all(app.config.passport.authenticate())
@@ -49,17 +49,17 @@ module.exports = app => {
     // .put(admin(app.api.category.save))
     // .delete(admin(app.api.category.remove))
 
-    app.route('/articles')
+    app.route('/devices')
         // .all(app.config.passport.authenticate())
-        .get(app.api.article.get)
-        .post(app.api.article.save)
+        .get(app.api.device.get)
+        .post(app.api.device.save)
 
-    app.route('/articles/:id')
-        .get(app.api.article.getById)
+    app.route('/devices/:id')
+        .get(app.api.device.getById)
         // .all(app.config.passport.authenticate())
-        .put(app.api.article.save) //temporario
-        .delete(app.api.article.remove)
+        .put(app.api.device.save) //temporario
+        .delete(app.api.device.remove)
 
-    app.route('/categories/:id/articles')
-        .get(app.api.article.getByCategory)
+    app.route('/categories/:id/devices')
+        .get(app.api.device.getByCategory)
 }

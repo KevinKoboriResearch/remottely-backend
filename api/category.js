@@ -31,7 +31,7 @@ module.exports = app => {
                 let existPossibleSpam = await app.db('categories').where({ userId: category.userId, parentId: null })
                 // console.log(existPossibleSpam.length)
                 try {
-                    notExistsOrError(existPossibleSpam.length >= 3, 'quer adicionar mais estabelecimentos? contate a nossa equipe.')
+                    notExistsOrError(!category.id && existPossibleSpam.length >= 3, 'quer adicionar mais estabelecimentos? contate a nossa equipe.')
                     // 'Para segurança de nossos clientes n permitimos mais de 3 estabelecimentos controladas por um unico administrador, contate a nossa equipe para que seja permitido a ação.')
                 } catch (msg) {
                     return res.status(400).send(msg)
@@ -243,9 +243,9 @@ module.exports = app => {
                 .where({ parentId: req.params.id })
             notExistsOrError(subcategory, 'Categoria possui subcategorias.')
 
-            const articles = await app.db('articles')
+            const devices = await app.db('devices')
                 .where({ categoryId: req.params.id })
-            notExistsOrError(articles, 'Categoria possui artigos.')
+            notExistsOrError(devices, 'Categoria possui artigos.')
 
             const rowsDeleted = await app.db('categories')
                 .where({ id: req.params.id }).del()
@@ -311,14 +311,14 @@ module.exports = app => {
     //     if(!tree) tree = categories.filter(c => !c.parentId)
     //     tree = tree.map(parentNode => {
     //         const isChild = node => node.parentId == parentNode.id
-    //         const articles = app.db('articles')
+    //         const devices = app.db('devices')
     //         .where({ categoryId: parentNode.id })
-    //         .then(articles => articles)
+    //         .then(devices => devices)
     //         .catch(err => err)
-    //         // const articles 
-    //         if(articles != null) {
-    //             for (var i = 0; i < articles.length; i++) {
-    //                 parentNode.children = articles[i].name
+    //         // const devices 
+    //         if(devices != null) {
+    //             for (var i = 0; i < devices.length; i++) {
+    //                 parentNode.children = devices[i].name
     //             }
     //         }
     //         parentNode.children = toTree(categories, categories.filter(isChild))
@@ -332,18 +332,18 @@ module.exports = app => {
     //     tree = tree.map(parentNode => {
     //         const isChild = node => node.parentId == parentNode.id
 
-    //         // const articlesByCategory = await app.db('articles')
+    //         // const devicesByCategory = await app.db('devices')
     //         // .where({ categoryId: 4 }).first()
-    //         const articlesByCategory = app.db('categories')
+    //         const devicesByCategory = app.db('categories')
     //                 .where({ parentId: node.parentId }).first()
-    //         // if(articlesByCategory != null) {
-    //             // for (var i = 0; i < articlesByCategory.length; i++) {
-    //             //     parentNode.children = articlesByCategory[i].name
+    //         // if(devicesByCategory != null) {
+    //             // for (var i = 0; i < devicesByCategory.length; i++) {
+    //             //     parentNode.children = devicesByCategory[i].name
     //             // }
     //         // }
     //         // parentNode.children = 'oi'
     //         // parentNode.children = toTree(categories, categories.filter(isChild))
-    //         parentNode.children = articlesByCategory[0].name
+    //         parentNode.children = devicesByCategory[0].name
     //         return parentNode
     //     })
     //     return tree
