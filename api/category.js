@@ -31,7 +31,7 @@ module.exports = app => {
                 let existPossibleSpam = await app.db('categories').where({ userId: category.userId, parentId: null })
                 // console.log(existPossibleSpam.length)
                 try {
-                    notExistsOrError(!category.id && existPossibleSpam.length >= 3, 'quer adicionar mais estabelecimentos? contate a nossa equipe.')
+                    notExistsOrError(!category.id && existPossibleSpam.length >= 1, 'quer adicionar mais estabelecimentos? contate a nossa equipe.')
                     // 'Para segurança de nossos clientes n permitimos mais de 3 estabelecimentos controladas por um unico administrador, contate a nossa equipe para que seja permitido a ação.')
                 } catch (msg) {
                     return res.status(400).send(msg)
@@ -245,7 +245,7 @@ module.exports = app => {
 
             const devices = await app.db('devices')
                 .where({ categoryId: req.params.id })
-            notExistsOrError(devices, 'Categoria possui artigos.')
+            notExistsOrError(devices, 'Categoria possui devices.')
 
             const rowsDeleted = await app.db('categories')
                 .where({ id: req.params.id }).del()

@@ -19,13 +19,13 @@ module.exports = app => {
             if (!userFromDB.admin) {
                 let existPossibleSpam = await app.db('devices').where({ userId: device.userId })
                 console.log(existPossibleSpam.length)
-                notExistsOrError(existPossibleSpam.length >= 20, 'quer adicionar mais dispositivos? contate a nossa equipe')
+                notExistsOrError(existPossibleSpam.length >= 3, 'quer adicionar mais dispositivos? contate a nossa equipe.')
             }
 
-            existsOrError(device.name, 'Nome não informado')
-            existsOrError(device.description, 'Descrição não informada')
-            existsOrError(device.categoryId, 'Categoria não informada')
-            existsOrError(device.userId, 'Autor não informado')
+            existsOrError(device.name, 'Nome não informado.')
+            existsOrError(device.nickname, 'Nome fantasia não informado.')
+            existsOrError(device.categoryId, 'Categoria não informada.')
+            existsOrError(device.userId, 'Autor não informado.')
 
         } catch (msg) {
             res.status(400).send(msg)
@@ -70,12 +70,12 @@ module.exports = app => {
         const page = req.query.page || 1
 
         app.db({ d: 'devices', u: 'users', c: 'categories' })
-            .select('d.id', 'd.name', 'd.description', 'd.image', 'd.categoryId', { categoryName: 'c.name' }, { author: 'u.name' })
+            .select('d.id', 'd.name', 'd.nickname', 'd.image', 'd.categoryId', { categoryName: 'c.name' }, { author: 'u.name' })
             .limit(limit).offset(page * limit - limit)
             .whereRaw('?? = ??', ['c.id', 'd.categoryId'])
             .whereRaw('?? = ??', ['u.id', 'd.userId'])
             // .whereIn('categoryId', ids)
-            .orderBy('d.id', 'desc')
+            .orderBy('d.id', 'nickname')
             .then(devices => res.json(devices))
             .catch(err => res.status(500).send(err))
     }
@@ -83,7 +83,7 @@ module.exports = app => {
     const getByUser = async (req, res) => {
 
         app.db('devices')
-            .select('id', 'name', 'description')
+            .select('id', 'name', 'nickname')
             .where({ userId: req.params.id })
             .then(devices => res.json(devices))
             .catch(err => res.status(500).send(err))
@@ -106,8 +106,7 @@ module.exports = app => {
         const ids = categories.rows.map(c => c.id)
 
         app.db({ d: 'devices', u: 'users', c: 'categories' })
-            // .select('a.id', 'a.name', 'a.description', { categoryName: 'c.name' }, { author: 'u.name' })
-            .select('d.id', 'd.name', 'd.description', 'd.image', 'd.categoryId', { categoryName: 'c.name' }, { author: 'u.name' })
+            .select('d.id', 'd.name', 'd.nickname', 'd.image', 'd.categoryId', { categoryName: 'c.name' }, { author: 'u.name' })
             .limit(limit).offset(page * limit - limit)
             .whereRaw('?? = ??', ['c.id', 'd.categoryId'])
             .whereRaw('?? = ??', ['u.id', 'd.userId'])

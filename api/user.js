@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt-nodejs')
 
 module.exports = app => {
-    const { existsOrError, notExistsOrError, equalsOrError, fullNameOrError, emailOrError } = app.api.validation
+    const { existsOrError, notExistsOrError, equalsOrError, fullNameOrError } = app.api.validation
 
     const encryptPassword = password => {
         const salt = bcrypt.genSaltSync(10)
@@ -12,21 +12,21 @@ module.exports = app => {
         const user = { ...req.body }
         if (req.params.id) user.id = req.params.id
 
-        if (!req.originalUrl.startsWith('/users')) user.admin = false
-        if (!req.user || !req.user.admin) user.admin = false
+        // if (!req.originalUrl.startsWith('/users')) user.role = 'viewer'
+        // if (!req.user || !req.user.role) user.role = 'viewer'
 
         try {
             existsOrError(user.name, 'Nome não informado')
             fullNameOrError(user.name, 'O nome precisa ser completo')
-            existsOrError(user.email, 'E-mail não informado')
-            emailOrError(user.email, 'Formato de e-mail inválido')
+            existsOrError(user.phone, 'Celular não informado')
+            // emailOrError(user.phone, 'Formato de celular inválido')
             existsOrError(user.password, 'Senha não informada')
             existsOrError(user.confirmPassword, 'Confirmação de Senha inválida')
             equalsOrError(user.password, user.confirmPassword,
                 'Senhas não conferem')
 
             const userFromDB = await app.db('users')
-                .where({ email: user.email }).first()
+                .where({ phone: user.phone }).first()
             if (!user.id) {
                 notExistsOrError(userFromDB, 'Usuário já cadastrado')
             }
@@ -54,7 +54,7 @@ module.exports = app => {
 
     const get = (req, res) => {
         app.db('users')
-            .select('id', 'name', 'email', 'admin', 'image')
+            .select('id', 'name', 'phone', 'role', 'image')
             .whereNull('deletedAt')
             .then(users => res.json(users))
             .catch(err => res.status(500).send(err))
@@ -79,7 +79,7 @@ module.exports = app => {
 
     const getById = (req, res) => {
         app.db('users')
-            .select('id', 'name', 'email', 'admin', 'image')
+            .select('id', 'name', 'phone', 'role', 'image')
             .where({ id: req.params.id })
             .whereNull('deletedAt')
             .first()
@@ -91,19 +91,20 @@ module.exports = app => {
         const user = { ...req.body }
         if (req.params.id) user.id = req.params.id
 
-        if (!req.originalUrl.startsWith('/users')) user.admin = false
-        if (!req.user || !req.user.admin) user.admin = false
+        // if (!req.originalUrl.startsWith('/users')) user.role = 'viewer'
+        // if (!req.user || !req.user.role) user.role = 'viewer'
 
         try {
             existsOrError(user.name, 'Nome não informado')
-            existsOrError(user.email, 'E-mail não informado')
+            existsOrError(user.phone, 'Celular não informado')
+            // emailOrError(user.phone, 'Formato de celular inválido')
             existsOrError(user.password, 'Senha não informada')
             existsOrError(user.confirmPassword, 'Confirmação de Senha inválida')
             equalsOrError(user.password, user.confirmPassword,
                 'Senhas não conferem')
 
             const userFromDB = await app.db('users')
-                .where({ email: user.email }).first()
+                .where({ phone: user.phone }).first()
             if (!user.id) {
                 notExistsOrError(userFromDB, 'Usuário já cadastrado')
             }

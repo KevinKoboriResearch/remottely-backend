@@ -1,6 +1,6 @@
 
 exports.up = function (knex, Promise) {
-    return knex.schema.createTable('userConnections', table => {
+    return knex.schema.createTable('userToUser', table => {
         table.increments('id').primary()
         table.integer('firstUserId').references('id')
             .inTable('users').notNull()
