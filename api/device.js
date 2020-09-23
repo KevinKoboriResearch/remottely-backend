@@ -19,7 +19,7 @@ module.exports = app => {
             if (!userFromDB.admin) {
                 let existPossibleSpam = await app.db('devices').where({ userId: device.userId })
                 console.log(existPossibleSpam.length)
-                notExistsOrError(existPossibleSpam.length >= 3, 'quer adicionar mais dispositivos? contate a nossa equipe.')
+                notExistsOrError(existPossibleSpam.length >= 30, 'quer adicionar mais dispositivos? contate a nossa equipe.')
             }
 
             existsOrError(device.name, 'Nome não informado.')
