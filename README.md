@@ -34,11 +34,10 @@ user.name = nome completo para q os usuarios/admins se encontrem com maior facil
 user.cellphone = numero de telefone/tem q ser unico
 user.cellphoneConfirm = sms verificado? - sempre q o campo cellphone for modificado setar para falso
 user.admin = consegue editar tudo, administradores globais da empresa
-- adminApp
-- adminLocal
+- admin
+- manager
 - authorized
 - viewer
-- tester
 user.adminLocal = consegue editar nomes, e quem pode acionar ou nao os dispositivos
 user.trigger = se pode acionar ou apenas ver os dispositivos
 user.image = foto de perfil
@@ -153,3 +152,35 @@ REGRAS DE USO DO APP:
 
 
         validar codigo automaticamente
+
+
+
+
+--- APP ---
+1 - PROPAGANDA
+2 - ENTRAR / CADASTRAR
+
+-- ERROS --
+LOGIN COM PROBLEMA DE DIGITACAO
+
+
+
+PAGES:
+usuarios comuns:
+- UserDevices.vue {select category}
+
+- UserEvents.vue
+  - UserEvent.vue
+  - UserNewEvent.vue
+
+- Notificatons.vue
+
+- UserProfile.vue
+
+- UserDevicesHistory.vue {show devices}
+  - DeviceHistory.vue {show userToDevice history}
+    <!-- - devices.vue -->
+
+Gestores apenas:
+- DevicesConfig.vue
+- Users.vue {select category} show users from category
